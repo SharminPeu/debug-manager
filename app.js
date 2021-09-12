@@ -11,10 +11,10 @@ fetch("https://randomuser.me/api/").then(res=>res.json()).then(data=>{
   userName=data.results[0].name
   userImg=data.results[0].picture.medium
 userEmail=data.results[0].email
-
+displayUserInfo(userImg,userName,userEmail)
 // console.log(userEmail,userImg,userName)
 })
-displayUserInfo(userImg,userName,userEmail)
+
 
 
 function displayUserInfo(userImg,userName,userEmail) {
@@ -30,7 +30,7 @@ function displayUserInfo(userImg,userName,userEmail) {
     </div>
     <div class="col-md-8">
       <div class="card-body">
-        <h5 class="card-title">${userName.first}</h5>
+        <h5 class="card-title">${userName?.first} ${userName?.last}</h5>
         <p class="card-text">${userEmail}</p>
         
       </div>
@@ -87,7 +87,7 @@ saveNoteButton.addEventListener("click", function () {
 });
 
 
-const noteCount=0
+let noteCount=0
 
 //function for displaying notes
 const showNotes = () => {
@@ -96,23 +96,24 @@ const showNotes = () => {
 
   const allNotes = localStorage.getItem("notes");
   
-  if (allNotes === "null") {
+  if (allNotes === null) {
     notesArray = [];
   } else {
     notesArray = JSON.parse(allNotes);
-    if (notesArray.length == 0) {
+   }
+   if (notesArray.length == 0) {
       
-      document.getElementById("display-message").innerText =
-        "No notes to display";
-    } else {
-      document.getElementById("display-message").innerText = "Your notes...";
-    }
+    document.getElementById("display-message").innerText =
+      "No notes to display";
+  } else {
+    document.getElementById("display-message").innerText = "Your notes...";
   }
 
-  
+  noteCount=notesArray.length
   notesArray.map((element, index) => {
-     noteCount++
-    notesDiv.innerHTML = `
+    //  noteCount++
+    const div=document.createElement('div')
+    div.innerHTML = `
 
  <div class="single-card">
       <div
@@ -142,7 +143,7 @@ const showNotes = () => {
               onblur="editBody(${index},this.id)"
               id="body${index}"
             >
-              ${element.bodi}
+              ${element.body}
             </p>
           </div>
         </div>
@@ -152,7 +153,9 @@ const showNotes = () => {
 
 
 `;
+notesDiv.appendChild(div)
   });
+  // noteCount++
 
    document.getElementById("notes-count").innerText = noteCount;
 
@@ -200,11 +203,11 @@ document.getElementById("search-btn").addEventListener("click", (e) => {
   e.preventDefault();
 });
 
-//function for filtering notes on keyword input in search field..
-// function inputChange(event) {
-//   const searchedKey = event.target.value.toLowerCase();
-//   filterNotes(searchedKey);
-// }
+// function for filtering notes on keyword input in search field..
+function inputChange(event) {
+  const searchedKey = event.target.value.toLowerCase();
+  filterNotes(searchedKey);
+}
 
 const filterNotes = (searchedKey) => {
   const x = document.getElementsByClassName("single-card");
